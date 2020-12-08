@@ -2,7 +2,7 @@
 Simple application to show the weather of different locations.
 
 ## Configs
-Create file ```env.js``` in root folder.
+Create file ```env.js``` under "scripts" folder.
 ```
 define([], function(){
     return {
