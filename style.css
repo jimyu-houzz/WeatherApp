@@ -16,11 +16,15 @@ body {
 }
 .location,
 .temperature {
-    height: 30vh;
+    height: 20vh;
     width: 50%;
     display: flex;
     justify-content: space-around;
     align-items: center;
+}
+.location-city-time {
+    text-align: center;
+    vertical-align: middle;
 }
 .temperature {
     flex-direction: column;
@@ -37,11 +41,17 @@ body {
 .temperature-section h2 {
     font-size: 40px;
 }
+.temperature-description {
+    height: 15vh;
+    text-transform: capitalize;
+}
+
 .other-location {
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
+    margin-top: 5vh;
 }
 .other-location p {
     margin: 5px;

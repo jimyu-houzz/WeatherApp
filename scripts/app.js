@@ -4,7 +4,6 @@ window.addEventListener("load", () => {
     let lon;
     let lat;
     let geoAccessible = false;
-    let allowGeo = false
     let api;
     let apiKey;
 
@@ -23,6 +22,7 @@ window.addEventListener("load", () => {
     let locationCity = document.querySelector('.location-city');
     let temperatureSection = document.querySelector('.temperature-section');
     let temperatureSpan = document.querySelector('.temperature-span');
+    let locationTime = document.querySelector('.location-time');
     // variables for other locations
     let currentCity = '';
     let otherLocations = document.querySelectorAll('p', '.other-location');
@@ -86,12 +86,15 @@ window.addEventListener("load", () => {
     function parseHTML(data){
         const description = data.weather[0].description;
         const city = data.name;
-        const degree = data.main.temp;
+        const degree = Math.round(data.main.temp * 10) / 10;
         const icon = data.weather[0].icon;
+        const timezone = getLocationTime(data.timezone);
         setIcons(icon);
+        temperatureSpan.textContent = "°C";
         temperatureDescription.textContent = description;
         temperatureDegree.textContent = degree;
         locationCity.textContent = city;
+        locationTime.textContent = timezone;
 
         // set currentCity
         currentCity = city 
@@ -103,25 +106,24 @@ window.addEventListener("load", () => {
 
     function changeDegreeUnit(degree, mode){
         let num;
-        if (mode === "C"){
+        if (mode === "°C"){
             num = (degree * 1.8) + 32;
             console.log("degree", degree, "num", num);
             // round numbers to 1 decimal
             num = Math.round(num * 10) / 10;
             temperatureDegree.textContent = num;
-            temperatureSpan.textContent = "F";
+            temperatureSpan.textContent = "°F";
         }else{
             num = (degree - 32) * 0.556;
             num = Math.round(num * 10) / 10;
             temperatureDegree.textContent = num;
-            temperatureSpan.textContent = "C";
+            temperatureSpan.textContent = "°C";
         }        
     }
 
     function requestGeoPermission(){
         if(confirm("CLick \"OK\" to allow geoloaction to get weather for current location.")){
             getCoordinates();
-            allowGeo = true;
         }
     }
 
@@ -137,5 +139,18 @@ window.addEventListener("load", () => {
                 alert(err.message);
             })        
         }
+    }
+
+    /* The timezone from openweather API is seconds from UTC+0. Calculate current timezone difference from 
+        UTC (offset), and the timezone difference from the API (timezone). */
+    function getLocationTime(timezone){
+        const time = Date.now() // number of seconds from UNIX EPOCH time
+        let d = new Date()
+        // getTimezoneOffset returns minutes, ex: SYD results in -660 (11 hours faster than UTC)
+        const offSet = d.getTimezoneOffset();
+        // timezone is in seconds, converting to minutes, then mutiply into milliseconds
+        let cityTime = new Date(time + ((timezone/60)+(offSet))*60000 ); 
+        
+        return cityTime.getHours() + ": " + cityTime.getMinutes();
     }
 })
