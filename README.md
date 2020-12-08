@@ -1,7 +1,7 @@
 # WeatherApp
 Simple application to show the weather of different locations.
 
-## Configs
+### Configs
 Create file ```env.js``` under "scripts" folder.
 ```
 define([], function(){
@@ -10,3 +10,6 @@ define([], function(){
     };
 });
 ```
+
+### To run app:
+Open the ```index.html``` file, and the app will start running a the browser.
