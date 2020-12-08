@@ -54,7 +54,7 @@ window.addEventListener("load", () => {
                 if (geoAccessible) {
                     api = `http://api.openweathermap.org/data/2.5/weather?units=metric&lat=${lat}&lon=${lon}&appid=${apiKey}`;
                 }else{
-                    alert("Geolocaion cannot be accessed from this browser. Please try another one.")
+                    alert("Geolocaion cannot be accessed from this browser. Please try another one or refresh page.")
                 }
             } else { // fecth for cities
                 api = `http://api.openweathermap.org/data/2.5/weather?units=metric&q=${location}&appid=11ed2c940b5999151b55830352c75b71`;
