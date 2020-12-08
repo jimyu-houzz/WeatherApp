@@ -3,14 +3,19 @@
 window.addEventListener("load", () => {
     let lon;
     let lat;
+    let geoAccessible = false;
+    let allowGeo = false
     let api;
     let apiKey;
 
     // using requirejs to get API_KEY from another file
     requirejs(['env'], (env) => {
         apiKey = env.api_key;
-        console.log('apikey: ', apiKey);
     })
+
+    // get coordinates while window loads
+    requestGeoPermission();
+    
 
 
     let temperatureDescription = document.querySelector('.temperature-description');
@@ -46,26 +51,18 @@ window.addEventListener("load", () => {
         if (location !== currentCity){ // prevent duplicate fetches for same location
             if (location === 'Current Location'){
                 // if geolocation is accessible
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(position => {
-                        console.log(position);
-                        lon = position.coords.longitude;
-                        lat = position.coords.latitude;
-    
-                        api = `http://api.openweathermap.org/data/2.5/weather?units=metric&lat=${lat}&lon=${lon}&appid=${apiKey}`;
-                    }, err => { // show error message
-                        console.log(err);
-                        alert(err.message);
-                    })        
+                if (geoAccessible) {
+                    api = `http://api.openweathermap.org/data/2.5/weather?units=metric&lat=${lat}&lon=${lon}&appid=${apiKey}`;
                 }else{
                     alert("Geolocaion cannot be accessed from this browser. Please try another one.")
                 }
             } else { // fecth for cities
                 api = `http://api.openweathermap.org/data/2.5/weather?units=metric&q=${location}&appid=11ed2c940b5999151b55830352c75b71`;
             }
-            
+            console.log("prepare to fetch: ", api);
             // only fetch data for new location
             if (!(location in weatherData)){
+                console.log('ready to fetch')
                 fetch(api)
                 .then(result => result.json())
                 .then(data => {
@@ -73,10 +70,10 @@ window.addEventListener("load", () => {
                     parseHTML(data);
                 })
             }else{
+                console.log('we did not fetch here')
                 parseHTML(weatherData[location]);
             }         
-        }
-        
+        }        
     }
 
     
@@ -84,7 +81,6 @@ window.addEventListener("load", () => {
     function setIcons(iconID){
         const url = 'http://openweathermap.org/img/wn/' + iconID + '@2x.png';
         document.getElementById("icon").setAttribute("src", url);
-        console.log("URL for image", url);
     }
 
     function parseHTML(data){
@@ -102,8 +98,7 @@ window.addEventListener("load", () => {
         // store fetched data to dictionary
         weatherData[currentCity] = data;
 
-        console.log(weatherData);
-        console.log(weatherData[currentCity]);       
+        console.log('weather data: ', weatherData);    
     }
 
     function changeDegreeUnit(degree, mode){
@@ -121,5 +116,26 @@ window.addEventListener("load", () => {
             temperatureDegree.textContent = num;
             temperatureSpan.textContent = "C";
         }        
+    }
+
+    function requestGeoPermission(){
+        if(confirm("CLick \"OK\" to allow geoloaction to get weather for current location.")){
+            getCoordinates();
+            allowGeo = true;
+        }
+    }
+
+    function getCoordinates(){
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                console.log('geocoordinates: ', position);
+                lon = position.coords.longitude;
+                lat = position.coords.latitude;
+                geoAccessible = true; // set attribute to true
+            }, err => { // show error message
+                console.log(err);
+                alert(err.message);
+            })        
+        }
     }
 })
