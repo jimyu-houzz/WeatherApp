@@ -6,6 +6,7 @@ Simple application to show the weather of different locations. Local time is sho
 <img src="./images/screenshot2.png" width="500" alt="screenshot2">
 
 ### Configs
+The app implements *OpenWeatherAPI*, to get your own API key, go to: https://openweathermap.org<br>
 Create file ```env.js``` under "scripts" folder.
 ```
 define([], function(){
