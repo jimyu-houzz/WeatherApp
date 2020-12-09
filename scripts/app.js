@@ -14,6 +14,8 @@ window.addEventListener("load", () => {
 
     // get coordinates while window loads
     requestGeoPermission();
+
+    
     
 
 
@@ -23,22 +25,34 @@ window.addEventListener("load", () => {
     let temperatureSection = document.querySelector('.temperature-section');
     let temperatureSpan = document.querySelector('.temperature-span');
     let locationTime = document.querySelector('.location-time');
-    // variables for other locations
+    // variables for other cities
     let currentCity = '';
-    let otherLocations = document.querySelectorAll('p', '.other-location');
+    let dropdownContents = document.querySelectorAll('p', '.dropdown-content');
 
     // create a dictionary like object to store the fetched data
     let weatherData = {};
 
-
-    // set Sydney as the default location
-    getLocationWeather('Sydney');
-    // set event listeners for different locations
-    for (let loc of otherLocations) {
+    /* dropdown list to show cities */
+    let dropbtn = document.querySelector('.dropbtn');
+    dropbtn.addEventListener('click', () => {
+        document.getElementById('myDropdown').classList.toggle("show");
+    })
+    // close dropdown list when user clicks somewhere else
+    window.onclick = function(event){
+        if (!event.target.matches('.dropbtn')){
+            document.getElementById('myDropdown').classList.remove('show');
+        }
+    }
+    // set event listeners for dropdown content
+    for (let loc of dropdownContents){
         loc.addEventListener('click', () => {
             getLocationWeather(loc.textContent);
         })
     }
+
+
+    // set Sydney as the default location
+    getLocationWeather('Sydney');
 
     // change between fahrenheit and celcius
     temperatureSection.addEventListener('click', () => {
@@ -59,10 +73,9 @@ window.addEventListener("load", () => {
             } else { // fecth for cities
                 api = `http://api.openweathermap.org/data/2.5/weather?units=metric&q=${location}&appid=11ed2c940b5999151b55830352c75b71`;
             }
-            console.log("prepare to fetch: ", api);
+            console.log("Fetching data from: ", api);
             // only fetch data for new location
             if (!(location in weatherData)){
-                console.log('ready to fetch')
                 fetch(api)
                 .then(result => result.json())
                 .then(data => {
@@ -70,7 +83,6 @@ window.addEventListener("load", () => {
                     parseHTML(data);
                 })
             }else{
-                console.log('we did not fetch here')
                 parseHTML(weatherData[location]);
             }         
         }        
@@ -108,7 +120,6 @@ window.addEventListener("load", () => {
         let num;
         if (mode === "°C"){
             num = (degree * 1.8) + 32;
-            console.log("degree", degree, "num", num);
             // round numbers to 1 decimal
             num = Math.round(num * 10) / 10;
             temperatureDegree.textContent = num;
@@ -136,7 +147,7 @@ window.addEventListener("load", () => {
                 geoAccessible = true; // set attribute to true
             }, err => { // show error message
                 console.log(err);
-                alert(err.message);
+                alert('Opps...' + err.message);
             })        
         }
     }
@@ -150,7 +161,12 @@ window.addEventListener("load", () => {
         const offSet = d.getTimezoneOffset();
         // timezone is in seconds, converting to minutes, then mutiply into milliseconds
         let cityTime = new Date(time + ((timezone/60)+(offSet))*60000 ); 
+        let minute = cityTime.getMinutes();
+        if (minute < 10){
+            minute = "0" + minute;
+        }
         
-        return cityTime.getHours() + ": " + cityTime.getMinutes();
-    }
+        return cityTime.getHours() + ": " + minute;
+    }   
 })
+
