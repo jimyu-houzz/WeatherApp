@@ -1,5 +1,5 @@
 # WeatherApp
-Simple application to show the weather of different locations.<br>
+Simple application to show the weather of different locations. Local time is shown, and you can see the temperature in Fahrenheit if you click on the temperature degree.<br>
 <br>
 <br>
 <img src="./images/screenshot1.png" width="500" alt="screenshot1">
