@@ -21,6 +21,9 @@ body {
     justify-content: space-around;
     align-items: center;
 }
+#icon { 
+    width:150px; 
+}
 .location {
     margin-top: 10vh;
 }
@@ -30,6 +33,7 @@ body {
 }
 .temperature {
     flex-direction: column;
+    margin-top: 2vh;
 }
 .temperature-section {
     display: flex;
@@ -38,10 +42,10 @@ body {
 }
 .temperature-section span {
     margin: 10px;
-    font-size: 30px;
+    font-size: 35px;
 }
 .temperature-section h2 {
-    font-size: 40px;
+    font-size: 45px;
 }
 .temperature-description {
     height: 15vh;
@@ -49,13 +53,18 @@ body {
 }
 .dropdown {
     display: inline-block;
+    align-items: center;
+    margin-top: 7vh;
+    width: 40%;
+    justify-content: space-around;
+    align-items: center;
 }
 .dropbtn {
     cursor: pointer;
     background-color: rgba(236, 150, 22, 0.938);
     border: none;
-    width: 30vh;
     color: white;
+    width: 100%;
     padding: 16px;
     font-size: 16px;
 }
@@ -77,3 +86,27 @@ body {
 }
 .dropdown p:hover {background-color: #ddd;}
 .show { display: block; }
+@media only screen and (max-width: 600px) {
+    #icon { width:50%; }
+    .dropdown { 
+        width: 65%; 
+        margin-top: 5vh;
+    }
+    .dropbtn { font-size: 4vh; }
+    .dropdown-content p { font-size: 3vh;}
+    .location-city { font-size: 10vw; }
+    .location-time { 
+        font-size: 3vh; 
+        margin-top: 1vh;
+    }
+    .temperature { margin-top: 4vh; }
+    .temperature-section h2 { font-size: 10vh; }
+    .temperature-section span { font-size: 8vh;}
+    .temperature-description { 
+        font-size: 3vh; 
+        margin-top: 2vh;
+        width: 100%;
+        text-align: center;
+    }
+
+}
