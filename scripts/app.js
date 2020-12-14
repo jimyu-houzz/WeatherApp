@@ -6,31 +6,60 @@ window.addEventListener("load", () => {
     let geoAccessible = false;
     let api;
     let apiKey;
+    let currentCity = '';
+    // create a dictionary like object to store the fetched data
+    let weatherData = {};
 
-    // using requirejs to get API_KEY from another file
-    requirejs(['env'], (env) => {
-        apiKey = env.api_key;
-    })
+    if (apiKey == undefined){
+        console.log("apikey is undefined! calling function now")
+        getAPIKey()
+    }
+
+    
+
+
 
     // get coordinates while window loads
     requestGeoPermission();
-
-    
+    // set a timer for requestjs to get the apikey
+    function setTimer(){
+        setTimeout(() => {
+            getLocationWeather('Sydney');
+        }, 200)
+    }
+    setTimer();
     
 
 
     let temperatureDescription = document.querySelector('.temperature-description');
     let temperatureDegree = document.querySelector('.temperature-degree');
     let locationCity = document.querySelector('.location-city');
+    let locationCountry = document.querySelector('.location-country');
     let temperatureSection = document.querySelector('.temperature-section');
     let temperatureSpan = document.querySelector('.temperature-span');
     let locationTime = document.querySelector('.location-time');
     // variables for other cities
-    let currentCity = '';
     let dropdownContents = document.querySelectorAll('p', '.dropdown-content');
 
-    // create a dictionary like object to store the fetched data
-    let weatherData = {};
+    
+
+    /* search city weather */
+    let searchBtn = document.querySelector('.search-button');
+    let w = window.innerWidth;
+    if (w <= 600){
+        searchBtn.textContent = '🔎';
+    }else {
+        searchBtn.textContent = 'Search';
+    }
+    
+    searchBtn.onclick = () => {
+        let inputLocation = document.getElementById('search-field').value;
+        if (inputLocation == ''){
+            alert('Please type in a city!');
+        } else{
+            getLocationWeather(inputLocation);
+        }       
+    }
 
     /* dropdown list to show cities */
     let dropbtn = document.querySelector('.dropbtn');
@@ -51,8 +80,6 @@ window.addEventListener("load", () => {
     }
 
 
-    // set Sydney as the default location
-    getLocationWeather('Sydney');
 
     // change between fahrenheit and celcius
     temperatureSection.addEventListener('click', () => {
@@ -62,25 +89,36 @@ window.addEventListener("load", () => {
     
     /* Uses geolocation to fetch weather for current location */
     function getLocationWeather(location){
+        console.log("inside getLocation weather function, location: ", location)
         if (location !== currentCity){ // prevent duplicate fetches for same location
             if (location === 'Current Location'){
                 // if geolocation is accessible
                 if (geoAccessible) {
                     api = `http://api.openweathermap.org/data/2.5/weather?units=metric&lat=${lat}&lon=${lon}&appid=${apiKey}`;
                 }else{
-                    alert("Geolocaion cannot be accessed from this browser. Please try another one or refresh page.")
+                    alert("Geolocation cannot be accessed from this browser. Please try another one or refresh page.")
                 }
             } else { // fecth for cities
-                api = `http://api.openweathermap.org/data/2.5/weather?units=metric&q=${location}&appid=11ed2c940b5999151b55830352c75b71`;
+                api = `http://api.openweathermap.org/data/2.5/weather?units=metric&q=${location}&appid=${apiKey}`;
             }
             console.log("Fetching data from: ", api);
             // only fetch data for new location
             if (!(location in weatherData)){
+                console.log("just before fetching, location: ", location)
                 fetch(api)
                 .then(result => result.json())
                 .then(data => {
                     console.log("data", data);
-                    parseHTML(data);
+                    if (data.cod == 400){
+                        alert('oops, bad request');
+                    }else if (data.cod == 404){
+                        alert('oops, the city you are searching for does not exist');
+                    } else{
+                        parseHTML(data);
+                    }
+                })
+                .catch(error => {
+                    console.log("we found an error", error)
                 })
             }else{
                 parseHTML(weatherData[location]);
@@ -101,17 +139,20 @@ window.addEventListener("load", () => {
         const degree = Math.round(data.main.temp * 10) / 10;
         const icon = data.weather[0].icon;
         const timezone = getLocationTime(data.timezone);
+        const country = data.sys.country;
         setIcons(icon);
         temperatureSpan.textContent = "°C";
         temperatureDescription.textContent = description;
         temperatureDegree.textContent = degree;
         locationCity.textContent = city;
         locationTime.textContent = timezone;
+        locationCountry.textContent = country;
 
         // set currentCity
         currentCity = city 
         // store fetched data to dictionary
         weatherData[currentCity] = data;
+        console.log('country: ', country);
 
         console.log('weather data: ', weatherData);    
     }
@@ -130,6 +171,13 @@ window.addEventListener("load", () => {
             temperatureDegree.textContent = num;
             temperatureSpan.textContent = "°C";
         }        
+    }
+
+    // using requirejs to get API_KEY from another file
+    function getAPIKey(){
+        requirejs(['env'], (env) => {
+            apiKey = env.api_key;            
+        });
     }
 
     function requestGeoPermission(){

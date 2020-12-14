@@ -25,7 +25,13 @@ body {
     width:150px; 
 }
 .location {
-    margin-top: 10vh;
+    margin-top: 1vh;
+}
+.location-bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    vertical-align: middle;
 }
 .location-city-time {
     text-align: center;
@@ -51,13 +57,41 @@ body {
     height: 15vh;
     text-transform: capitalize;
 }
+.search-city {
+    display: flex;
+    flex-direction: row;
+    width: 40%;
+    height: 8vh;
+    font-size: 16px;
+    justify-content: space-around;
+    align-items: center;
+}
+#search-field {
+    border: none;
+    flex: 8;
+    font-size: 16px;
+    padding: 15px 12px;
+    margin-right: 4px;
+    border-radius: 0;
+}
+.search-button {
+    border: none;
+    color:white;
+    background-color: rgba(236, 150, 22, 0.938);
+    flex: 2;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+}
 .dropdown {
     display: inline-block;
     align-items: center;
-    margin-top: 7vh;
+    margin-top: 6vh;
     width: 40%;
     justify-content: space-around;
-    align-items: center;
 }
 .dropbtn {
     cursor: pointer;
@@ -67,6 +101,7 @@ body {
     width: 100%;
     padding: 16px;
     font-size: 16px;
+    outline: none;
 }
 .dropbtn:hover, .dropbtn:focus {
     background-color: #ca7505;
@@ -86,16 +121,43 @@ body {
 }
 .dropdown p:hover {background-color: #ddd;}
 .show { display: block; }
+@media only screen and (max-width: 800px) {
+    .search-city {
+        width: 50%;
+    } 
+    .dropdown {
+        width: 50%;
+    }
+}    
 @media only screen and (max-width: 600px) {
     #icon { width:50%; }
+    .search-city {
+        margin-top: 3vh;
+        width: 65%;        
+    }
+    .search-button, #search-field {
+        font-size: 3vh;
+    }
+    #search-field {
+        flex: 7;
+        margin-right: 0px;
+    }
+    .search-button {
+        flex:2;
+        padding: 12px 4px;
+        vertical-align: middle;
+    }
     .dropdown { 
         width: 65%; 
-        margin-top: 5vh;
+        margin-top: 4vh;
     }
-    .dropbtn { font-size: 4vh; }
+    .dropbtn { 
+        font-size: 3vh; 
+        margin-top: 3vh;
+    }
     .dropdown-content p { font-size: 3vh;}
     .location-city { font-size: 10vw; }
-    .location-time { 
+    .location-time, .location-country { 
         font-size: 3vh; 
         margin-top: 1vh;
     }
